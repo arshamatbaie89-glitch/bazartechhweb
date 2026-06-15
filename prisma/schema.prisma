@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  productId   String   @unique
+  name        String
+  description String
+  price       Float
+  salePrice   Float?
+  images      String   @default("[]")
+  videoUrls   String   @default("[]")
+  category    String   @default("general")
+  stock       Int      @default(0)
+  rating      Float    @default(0)
+  reviewCount Int      @default(0)
+  views       Int      @default(0)
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Admin {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  email        String   @default("")
+  createdAt    DateTime @default(now())
+  otpVerifications OtpVerification[]
+}
+
+model OtpVerification {
+  id         Int      @id @default(autoincrement())
+  adminId    Int
+  sessionId  String   @unique
+  otpHash    String
+  expiresAt  DateTime
+  attempts   Int      @default(0)
+  cooldownAt DateTime?
+  createdAt  DateTime @default(now())
+
+  admin Admin @relation(fields: [adminId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id             Int      @id @default(autoincrement())
+  productId      String
+  productName    String
+  price          Float
+  customerName   String
+  customerPhone  String
+  customerAddress String
+  quantity       Int      @default(1)
+  items          String   @default("[]")
+  status         String   @default("requested")
+  createdAt      DateTime @default(now())
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  productId String
+  rating    Int
+  comment   String
+  author    String   @default("Anonymous")
+  createdAt DateTime @default(now())
+}
