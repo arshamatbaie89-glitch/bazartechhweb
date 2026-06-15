@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs'
 import { signToken } from '@/lib/auth'
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { checkRateLimit, getRemainingAttempts } from '@/lib/rateLimit'
+import { checkRateLimit } from '@/lib/rateLimit'
 import { createCsrfToken } from '@/lib/csrf'
 
 export async function POST(request) {

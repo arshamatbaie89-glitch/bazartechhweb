@@ -1,130 +1,244 @@
-# Bazartech - Premium Ecommerce Store
+# Bazartech — Premium Ecommerce Store
 
-A bilingual (Arabic/English) ecommerce platform built with Next.js, featuring a full admin dashboard with 2FA authentication.
+Bilingual (Arabic/English) ecommerce platform with admin dashboard, OTP 2FA authentication, dark mode, and mobile-responsive design.
+
+Built with Next.js 16, Prisma ORM, and SQLite.
 
 ## Features
 
-- **Product Catalog** — Browse, search, filter, and sort products with responsive grid layout
-- **Shopping Cart & Wishlist** — Persistent cart/wishlist with localStorage
-- **Admin Dashboard** — Manage products, orders, and analytics
-- **2FA Authentication** — OTP-based two-factor authentication for admin login
 - **Bilingual (i18n)** — Full Arabic/English support with RTL layout
-- **Dark Mode** — Theme toggle with system preference detection
-- **Mobile Responsive** — Bottom nav bar and collapsible admin sidebar on mobile
-- **Security** — CSRF protection, rate limiting, origin/referer checks
+- **Product Catalog** — Grid listing, categories, search, pagination, sorting
+- **Shopping Cart & Wishlist** — Persistent via localStorage
+- **Admin Dashboard** — Manage products, orders, stock, quick lookup
+- **2FA Authentication** — Password + OTP with SHA-256 hashing and rate limiting
+- **Security** — CSRF protection, rate limiting, input sanitization, CSP headers
+- **Dark Mode** — System-aware theme toggle with localStorage persistence
+- **Mobile Responsive** — Bottom nav bar, collapsible admin sidebar, touch-friendly
 
 ## Tech Stack
 
-| Layer    | Tech                              |
-| -------- | --------------------------------- |
-| Frontend | Next.js 16, React 19, Tailwind v4 |
-| Backend  | Next.js API Routes, Middleware     |
-| Database | SQLite via Prisma ORM             |
-| Auth     | JWT (HS256), OTP (SHA-256), bcrypt|
-| i18n     | Custom client-side implementation   |
+| Category       | Tech                                                        |
+|----------------|-------------------------------------------------------------|
+| Framework      | [Next.js](https://nextjs.org) 16.2.9 (App Router, Turbopack)|
+| UI             | [React](https://react.dev) 19, [Tailwind CSS](https://tailwindcss.com) v4 |
+| Database       | SQLite via [Prisma](https://prisma.io) ORM 7.x               |
+| Auth           | JWT (HS256), bcrypt, SHA-256 OTP, CSRF tokens               |
+| Deployment     | Any Node.js host (VPS, Railway, Fly.io, etc.)               |
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
+- **Node.js 20+**
+- **npm**
 
-- Node.js 20+
-- npm
-
-### Installation
+## Quick Start
 
 ```bash
-git clone <repo-url>
+# 1. Clone
+git clone https://github.com/your-org/bazartech.git
 cd bazartech
+
+# 2. Install dependencies
 npm install
-```
 
-### Database Setup
+# 3. Generate Prisma client
+npx prisma generate
 
-```bash
+# 4. Push schema to SQLite database
 npx prisma db push
-npx prisma db seed
+
+# 5. Seed with default admin + sample products
+npm run seed
+
+# 6. Start development server
+npm run dev
 ```
 
-### Environment Variables
+Open [http://localhost:3001](http://localhost:3001).
 
-Copy `.env.example` to `.env` and adjust:
+## Environment Variables
+
+Copy `.env.example` to `.env` and configure:
 
 ```bash
 cp .env.example .env
 ```
 
-Key variables:
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `DATABASE_URL` | Yes | `file:./dev.db` | SQLite database path |
+| `JWT_SECRET` | Yes | — | Min 32-char hex string for JWT signing |
+| `COOKIE_SECURE` | No | `false` | Set `true` when serving over HTTPS |
+| `NEXT_PUBLIC_SITE_URL` | No | `http://localhost:3000` | Public site URL |
+| `NEXT_PUBLIC_INSTAGRAM_URL` | No | — | Instagram profile URL |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | No | — | WhatsApp business number |
 
-| Variable                   | Description                         |
-| -------------------------- | ----------------------------------- |
-| `DATABASE_URL`             | SQLite database path                |
-| `JWT_SECRET`               | Secret for JWT signing (min 32 chars) |
-| `COOKIE_SECURE`            | `true` in production behind HTTPS   |
-| `NEXT_PUBLIC_SITE_URL`     | Your production URL                 |
-
-### Development
+### Generating JWT_SECRET
 
 ```bash
-npm run dev
-# or
-.\start.bat
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-Open [http://localhost:3001](http://localhost:3001) (or [http://localhost:3000](http://localhost:3000) if port is free).
+### Database
 
-### Default Admin Credentials
+```bash
+# Push schema changes to DB
+npx prisma db push
+
+# Regenerate Prisma client after schema changes
+npx prisma generate
+
+# Seed database
+npm run seed
+
+# Open Prisma Studio (GUI database browser)
+npx prisma studio
+```
+
+The SQLite database file (`dev.db`) is created in the project root.
+
+## Default Admin Credentials
 
 > **Username:** `admin`  
 > **Password:** `admin123`  
 > **OTP:** Printed in the server console during login
 
-**Change the default password immediately after first login.**
+**⚠️ Change the default password immediately after first login.**
 
-### Production Build
+## Development
+
+```bash
+npm run dev        # Start dev server on port 3001
+npm run build      # Production build
+npm run start      # Start production server
+npm run lint       # Run ESLint
+```
+
+## Production Build
 
 ```bash
 npm run build
-npm start
+npm run start
 ```
 
-Set `COOKIE_SECURE=true` and `NEXT_PUBLIC_SITE_URL` to your domain before deploying.
+Before deploying:
+
+```bash
+# 1. Set COOKIE_SECURE=true in .env
+# 2. Set NEXT_PUBLIC_SITE_URL to your domain
+# 3. Generate a strong JWT_SECRET
+# 4. Change the default admin password
+```
+
+## Deployment
+
+### Compatible Platforms
+
+This project uses SQLite, which requires a **persistent filesystem**. The following platforms support it:
+
+| Platform | SQLite Support | Notes |
+|----------|---------------|-------|
+| **VPS** (DigitalOcean, Linode, Hetzner) | ✅ Full | Deploy with Docker or directly |
+| **Railway** | ✅ Full | Persistent volume support |
+| **Fly.io** | ✅ Full | Volume mounts |
+| **Render** | ✅ Full | Persistent disk |
+| **Vercel** | ❌ No | Serverless does not support SQLite |
+
+### Deploying to a VPS with Docker
+
+```dockerfile
+FROM node:20-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npx prisma generate
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "start"]
+```
+
+```bash
+docker build -t bazartech .
+docker run -d -p 3000:3000 -v ./data:/app bazartech
+```
+
+### ⚠️ SQLite & Vercel
+
+**Vercel does not support SQLite** because serverless functions run on a read-only filesystem and `better-sqlite3` requires native binaries. If you need Vercel deployment, you must migrate to PostgreSQL. **This project does not include that migration.** See [Prisma Postgres migration guide](https://pris.ly/d/migrate-postgres) if needed.
 
 ## Project Structure
 
 ```
-├── app/                    # Next.js App Router pages & API routes
-│   ├── admin/              # Admin dashboard (protected)
-│   ├── api/                # API route handlers
-│   ├── cart/               # Shopping cart page
-│   ├── category/           # Category listing
-│   ├── product/            # Product detail page
-│   └── verify-otp/         # 2FA OTP verification
-├── components/             # Shared React components
-├── context/                # React contexts (cart, wishlist, theme, etc.)
-├── lib/                    # Utilities (auth, csrf, otp, prisma, etc.)
-├── prisma/                 # Database schema & seed
-├── public/                 # Static assets
-└── proxy.js                # Next.js middleware (security)
+.
+├── app/                       # Next.js App Router
+│   ├── layout.js              # Root layout (providers, header, footer)
+│   ├── page.js                # Homepage (featured + paginated products)
+│   ├── globals.css            # Tailwind v4 + CSS vars + animations
+│   ├── admin/                 # Admin dashboard (protected)
+│   ├── adminlogin/            # Admin login page
+│   ├── verify-otp/            # 2FA OTP verification page
+│   ├── cart/                  # Shopping cart
+│   ├── wishlist/              # Wishlist
+│   ├── category/[slug]/       # Category product listing
+│   ├── product/[id]/          # Product detail + order modal
+│   └── api/                   # API route handlers
+├── components/                # Shared React components
+├── context/                   # React Context providers
+├── lib/                       # Utilities (auth, CSRF, OTP, validation)
+├── prisma/
+│   ├── schema.prisma          # Database schema (SQLite)
+│   └── seed.js                # Seed script
+├── prisma.config.ts           # Prisma CLI configuration
+├── proxy.js                   # Next.js middleware (security, rate limiting)
+├── public/uploads/            # Product images
+└── start.bat                  # Dev startup script (Windows)
 ```
 
-## API Endpoints
+## API Reference
 
-### Public
-- `GET /api/products` — List products (paginated, filterable)
-- `GET /api/products/[id]` — Product detail
-- `GET /api/categories` — Category list
-- `POST /api/orders` — Place order
-- `POST /api/reviews/[productId]` — Submit review
+### Public Endpoints
 
-### Auth
-- `POST /api/auth/login` — Admin login (returns `requires2FA`)
-- `POST /api/auth/verify-otp` — Verify OTP token
-- `POST /api/auth/resend-otp` — Resend OTP (60s cooldown)
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/products` | Paginated product list. Query: `page`, `limit`, `sort`, `category`, `search` |
+| GET | `/api/products/[id]` | Product detail by `productId` |
+| GET | `/api/categories` | Category list |
+| POST | `/api/orders` | Place an order |
+| POST | `/api/orders/bulk` | Place a multi-item order |
+| GET | `/api/reviews/[productId]` | Product reviews |
+| POST | `/api/reviews/[productId]` | Submit a review |
+| GET | `/api/search` | Search products. Query: `q` (query), `limit` |
 
-### Admin (requires JWT + CSRF)
-- `GET/POST /api/admin/products` — Manage products
-- `GET/PATCH /api/admin/orders` — Manage orders
-- `GET /api/admin/analytics` — Sales analytics
+### Auth Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/auth/login` | Admin login (returns `requires2FA`) |
+| POST | `/api/auth/verify-otp` | Verify OTP, receives JWT + CSRF cookies |
+| POST | `/api/auth/resend-otp` | Resend OTP (60s cooldown) |
+
+### Admin Endpoints (requires JWT + CSRF)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET/POST | `/api/admin/products` | List / create products |
+| GET/PUT/DELETE | `/api/admin/products/[id]` | Read / update / delete product |
+| GET | `/api/admin/orders` | List orders |
+| PUT | `/api/admin/orders/[id]` | Update order status |
+| GET | `/api/admin/analytics` | Dashboard analytics |
+| GET | `/api/admin/quick-lookup/[id]` | Quick product lookup by ID |
+| POST | `/api/admin/login` | Legacy login (direct JWT, no 2FA) |
+| POST | `/api/admin/logout` | Clear auth cookies |
+
+## Security
+
+- **CSRF**: 64-char random tokens, validated via timing-safe comparison
+- **Rate Limiting**: Per-IP limits (200/min global, 5/min login, 60/min admin)
+- **Content Security Policy**: Restrictive CSP headers on all responses
+- **Input Validation**: Sanitization, allowlists, length limits on all user input
+- **Cookie Security**: `httpOnly`, `SameSite=Strict`, optional `Secure` flag
+- **OTP**: SHA-256 hashed, 5-minute expiry, 3-attempt lockout, 60s resend cooldown
+- **JWT**: HS256 algorithm, 8-hour expiry, min 32-char secret
 
 ## License
 
