@@ -1,7 +1,8 @@
 import { prisma } from "@/lib/prisma"
 import { isAuthenticated } from "@/lib/auth"
 import { NextResponse } from "next/server"
-import { validateInt, validateStatus, isValidTransition, safeError } from "@/lib/validation"
+import { validateInt, validateStatus, isValidTransition } from "@/lib/validation"
+import { handleApiError } from "@/lib/errors"
 
 export async function PUT(request, { params }) {
   if (!(await isAuthenticated())) {
@@ -52,6 +53,6 @@ export async function PUT(request, { params }) {
     })
     return NextResponse.json(updated)
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

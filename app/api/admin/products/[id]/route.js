@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { isAuthenticated } from '@/lib/auth'
 import { NextResponse } from 'next/server'
-import { sanitizeObject, validateLength, validatePrice, validateInt, allowlist, validateUrls, safeParse, safeError } from '@/lib/validation'
+import { sanitizeObject, validateLength, validatePrice, validateInt, allowlist, validateUrls, safeParse } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 const ALLOWED_UPDATE_FIELDS = ['name', 'description', 'price', 'salePrice', 'images', 'videoUrls', 'category', 'stock', 'featured']
 
@@ -21,7 +22,7 @@ export async function GET(request, { params }) {
       videoUrls: JSON.parse(product.videoUrls || '[]'),
     })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }
 
@@ -61,7 +62,7 @@ export async function PUT(request, { params }) {
     const product = await prisma.product.update({ where: { id: numId }, data })
     return NextResponse.json({ ...product, images: JSON.parse(product.images), videoUrls: JSON.parse(product.videoUrls) })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }
 
@@ -80,6 +81,6 @@ export async function DELETE(request, { params }) {
     await prisma.product.delete({ where: { id: numId } })
     return NextResponse.json({ success: true })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
-import { safeParse, safeError } from '@/lib/validation'
+import { safeParse } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 export async function GET(request, { params }) {
   const { id } = await params
@@ -25,6 +26,6 @@ export async function GET(request, { params }) {
       videoUrls: safeParse(updated.videoUrls),
     })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

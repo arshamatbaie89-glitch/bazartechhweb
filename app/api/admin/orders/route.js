@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { isAuthenticated } from '@/lib/auth'
 import { NextResponse } from 'next/server'
-import { safeError } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 export async function GET() {
   if (!(await isAuthenticated())) {
@@ -11,6 +11,6 @@ export async function GET() {
     const orders = await prisma.order.findMany({ orderBy: { createdAt: "desc" }, take: 200 })
     return NextResponse.json(orders)
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

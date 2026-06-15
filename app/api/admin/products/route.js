@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { isAuthenticated } from '@/lib/auth'
 import { NextResponse } from 'next/server'
-import { sanitizeObject, validateLength, validatePrice, validateInt, allowlist, validateUrls, safeParse, safeError } from '@/lib/validation'
+import { sanitizeObject, validateLength, validatePrice, validateInt, allowlist, validateUrls, safeParse } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 const ALLOWED_CREATE_FIELDS = ['name', 'description', 'price', 'salePrice', 'images', 'videoUrls', 'category', 'stock', 'featured']
 
@@ -15,7 +16,7 @@ export async function GET() {
       products.map((p) => ({ ...p, images: safeParse(p.images), videoUrls: safeParse(p.videoUrls) }))
     )
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }
 
@@ -65,6 +66,6 @@ export async function POST(request) {
 
     return NextResponse.json({ ...product, images: JSON.parse(product.images), videoUrls: JSON.parse(product.videoUrls) }, { status: 201 })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

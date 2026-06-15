@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
-import { safeError } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 function safeParse(str) {
   try { return JSON.parse(str) } catch { return [] }
@@ -52,6 +52,6 @@ export async function GET(request) {
       total, page, totalPages: Math.ceil(total / limit), hasMore: skip + limit < total,
     })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

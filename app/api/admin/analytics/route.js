@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { isAuthenticated } from '@/lib/auth'
 import { NextResponse } from 'next/server'
-import { safeError } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 export async function GET() {
   if (!(await isAuthenticated())) {
@@ -27,6 +27,6 @@ export async function GET() {
       totalOrders: results[5].status === 'fulfilled' ? results[5].value : 0,
     })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

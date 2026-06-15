@@ -1,7 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { isAuthenticated } from '@/lib/auth'
 import { NextResponse } from 'next/server'
-import { safeParse, safeError } from '@/lib/validation'
+import { safeParse } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 export async function GET(request, { params }) {
   if (!(await isAuthenticated())) {
@@ -23,6 +24,6 @@ export async function GET(request, { params }) {
       videoUrls: safeParse(product.videoUrls),
     })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

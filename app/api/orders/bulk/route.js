@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
-import { sanitize, sanitizeObject, validateLength, validatePrice, validateInt, isSafeUrl, safeError } from "@/lib/validation"
+import { sanitize, sanitizeObject, validateLength, validatePrice, validateInt, isSafeUrl } from "@/lib/validation"
+import { handleApiError } from "@/lib/errors"
 
 export async function POST(request) {
   try {
@@ -47,6 +48,6 @@ export async function POST(request) {
     })
     return NextResponse.json(order, { status: 201 })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

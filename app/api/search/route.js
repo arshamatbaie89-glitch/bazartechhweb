@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
-import { safeParse, safeError } from '@/lib/validation'
+import { safeParse } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 export async function GET(request) {
   const { searchParams } = new URL(request.url)
@@ -30,6 +31,6 @@ export async function GET(request) {
       products: products.map((p) => ({ ...p, images: safeParse(p.images) })),
     })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

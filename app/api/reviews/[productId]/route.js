@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
-import { sanitize, validateInt, validateLength, safeError, getClientIp } from '@/lib/validation'
+import { sanitize, validateInt, validateLength, getClientIp } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 export async function GET(request, { params }) {
   try {
@@ -15,7 +16,7 @@ export async function GET(request, { params }) {
     })
     return NextResponse.json({ reviews })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }
 
@@ -68,6 +69,6 @@ export async function POST(request, { params }) {
 
     return NextResponse.json(review, { status: 201 })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 500 })
+    return handleApiError(error)
   }
 }

@@ -1,7 +1,6 @@
 import { isAuthenticated } from '@/lib/auth'
 import { saveFile } from '@/lib/upload'
-import { NextResponse } from 'next/server'
-import { safeError } from '@/lib/validation'
+import { handleApiError } from '@/lib/errors'
 
 export async function POST(request) {
   if (!(await isAuthenticated())) {
@@ -29,6 +28,6 @@ export async function POST(request) {
 
     return NextResponse.json({ urls })
   } catch (error) {
-    return NextResponse.json({ error: safeError(error) }, { status: 400 })
+    return handleApiError(error)
   }
 }
