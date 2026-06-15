@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Bazartech — Premium Ecommerce Store
 
 Bilingual (Arabic/English) ecommerce platform with admin dashboard, OTP 2FA authentication, dark mode, and mobile-responsive design.
@@ -243,3 +244,7 @@ docker run -d -p 3000:3000 -v ./data:/app bazartech
 ## License
 
 Private — all rights reserved.
+=======
+# bazartechhweb
+bazartechwebsite
+>>>>>>> b6fc68fdd12e36c29dcc171862e6a868e15ad575
