@@ -75,6 +75,7 @@ export default function OrderModal({ product, onClose }) {
       })
       if (!res.ok) throw new Error(t("order.failed"))
       setDone(true)
+      window.open("https://api.whatsapp.com/send?phone=96897484837", "_blank")
     } catch (err) {
       setError(err.message)
     } finally {

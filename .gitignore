@@ -57,3 +57,5 @@ Desktop.ini
 # AI agent configs (local per-dev preferences)
 AGENTS.md
 CLAUDE.md
+
+.vercel

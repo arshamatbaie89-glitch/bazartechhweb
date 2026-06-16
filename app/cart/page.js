@@ -63,6 +63,7 @@ export default function CartPage() {
       }
       setDone(true)
       clearCart()
+      window.open("https://api.whatsapp.com/send?phone=96897484837", "_blank")
     } catch (err) {
       setOrderError(err.message)
     } finally {
