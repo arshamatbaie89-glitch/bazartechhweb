@@ -7,8 +7,17 @@ import ProductCard from "@/components/ProductCard"
 import Link from "next/link"
 
 const categoryNames = {
-  electronics: "Electronics", fashion: "Fashion", "home-living": "Home & Living",
-  sports: "Sports", beauty: "Beauty", books: "Books", all: "All Products",
+  "electronics-car": "Electronics & Car Accessories",
+  "cosmetics-personal-care": "Cosmetics & Personal Care",
+  "fashion-accessories": "Fashion & Accessories",
+  "home-living": "Home & Living",
+  "sports-camping": "Sports & Camping",
+  "stationery-school-bags": "Stationery & School Bags",
+  "cleaning-products": "Cleaning Products",
+  "kitchen-dining": "Kitchen & Dining",
+  "baby-kids": "Baby & Kids",
+  "frozen-items": "Frozen Items",
+  all: "All Products",
 }
 
 export default function CategoryPage() {

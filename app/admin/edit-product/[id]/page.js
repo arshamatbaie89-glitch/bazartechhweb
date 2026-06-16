@@ -6,10 +6,17 @@ import Image from "next/image"
 import { apiFetch } from "@/lib/api"
 
 const categories = [
-  { value: "general", label: "General" }, { value: "electronics", label: "Electronics" },
-  { value: "fashion", label: "Fashion" }, { value: "home-living", label: "Home & Living" },
-  { value: "sports", label: "Sports" }, { value: "beauty", label: "Beauty" },
-  { value: "books", label: "Books" },
+  { value: "general", label: "General" },
+  { value: "electronics-car", label: "Electronics & Car Accessories" },
+  { value: "cosmetics-personal-care", label: "Cosmetics & Personal Care" },
+  { value: "fashion-accessories", label: "Fashion & Accessories" },
+  { value: "home-living", label: "Home & Living" },
+  { value: "sports-camping", label: "Sports & Camping" },
+  { value: "stationery-school-bags", label: "Stationery & School Bags" },
+  { value: "cleaning-products", label: "Cleaning Products" },
+  { value: "kitchen-dining", label: "Kitchen & Dining" },
+  { value: "baby-kids", label: "Baby & Kids" },
+  { value: "frozen-items", label: "Frozen Items" },
 ]
 
 export default function EditProduct() {
