@@ -1,6 +1,7 @@
 import { isAuthenticated } from '@/lib/auth'
 import { saveFile } from '@/lib/upload'
 import { handleApiError } from '@/lib/errors'
+import { NextResponse } from 'next/server'
 
 export async function POST(request) {
   if (!(await isAuthenticated())) {
@@ -23,7 +24,7 @@ export async function POST(request) {
     for (const file of files) {
       if (!(file instanceof File)) continue
       const filename = await saveFile(file)
-      urls.push(`/uploads/${filename}`)
+      urls.push(`/api/uploads/${filename}`)
     }
 
     return NextResponse.json({ urls })
