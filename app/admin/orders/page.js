@@ -29,7 +29,7 @@ export default function AdminOrdersPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       })
-      if (res.ok) { loadOrders(); setTab(status === "accepted" ? "processing" : "history") }
+      if (res.ok) { loadOrders(); setTab(status === "accepted" ? "processing" : status === "completed" ? "history" : "history") }
     } catch {}
   }
 
@@ -37,7 +37,7 @@ export default function AdminOrdersPage() {
 
   const orderOrders = orders.filter((o) => o.status === "requested")
   const processingOrders = orders.filter((o) => o.status === "accepted")
-  const historyOrders = orders.filter((o) => o.status === "rejected")
+  const historyOrders = orders.filter((o) => o.status === "rejected" || o.status === "completed")
 
   return (
     <div>
@@ -85,8 +85,9 @@ export default function AdminOrdersPage() {
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                       order.status === "accepted" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
                       order.status === "rejected" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" :
+                      order.status === "completed" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
                       "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
-                    }`}>{order.status}</span>
+                    }`}>{order.status === "completed" ? t("adminOrders.completed") : order.status}</span>
                   </div>
                   <div className="mt-2 space-y-1">
                     {(() => {
@@ -141,9 +142,14 @@ export default function AdminOrdersPage() {
                     </>
                   )}
                   {order.status === "accepted" && (
-                    <button onClick={() => { navigator.clipboard.writeText(order.customerPhone); alert(t("adminOrders.phoneCopied")); setTab("history") }} className="px-4 py-1.5 bg-[#FFC220] text-[#1a365d] text-xs font-semibold rounded-lg hover:bg-[#d4a000] transition-colors">
-                      {t("adminOrders.copyPhone")}
-                    </button>
+                    <>
+                      <button onClick={() => { navigator.clipboard.writeText(order.customerPhone); alert(t("adminOrders.phoneCopied")) }} className="px-4 py-1.5 bg-[#FFC220] text-[#1a365d] text-xs font-semibold rounded-lg hover:bg-[#d4a000] transition-colors">
+                        {t("adminOrders.copyPhone")}
+                      </button>
+                      <button onClick={() => updateStatus(order.id, "completed")} className="px-4 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                        {t("adminOrders.moveToHistory")}
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
